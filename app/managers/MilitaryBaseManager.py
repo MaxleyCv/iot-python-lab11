@@ -1,5 +1,5 @@
-from app.python.models.Arm import Arm
-from app.python.models.SpyEquipment import SpyEquipment
+from application.models.Arm import Arm
+from application.models.SpyEquipment import SpyEquipment
 
 
 class MilitaryBaseManager:

@@ -1,5 +1,5 @@
-from app.python.models.Arm import Arm
-from app.python.models.Engine import Engine
+from application.models.Arm import Arm
+from application.models.Engine import Engine
 
 
 class Vehicle(Arm):
