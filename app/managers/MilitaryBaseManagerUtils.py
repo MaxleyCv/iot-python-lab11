@@ -1,8 +1,7 @@
-from abc import ABC, abstractmethod
-from functools import cmp_to_key
+from abc import ABC
 
-from app.python.managers.SortingType import SortingType
-from app.python.models.Arm import Arm
+from application.managers.SortingType import SortingType
+from application.models.Arm import Arm
 
 
 class MilitaryBaseManagerUtils(ABC):
