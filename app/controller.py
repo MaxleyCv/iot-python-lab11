@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
+import pymysql
 import json
 import copy
 
@@ -15,12 +16,14 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
 
+app.secret_key = 'vasiaVasile2020'
+
 
 class RestArm(Arm, db.Model):
     id = Column(Integer, primary_key=True)
     _count_in_stack = Column(Integer, unique=False)
-    _country_of_origin = Column(String, unique=False)
-    _serial_number = Column(String, unique=True)
+    _country_of_origin = Column(String(20), unique=False)
+    _serial_number = Column(String(20), unique=True)
     _operation_crew_count = Column(Integer, unique=False)
 
     def __init__(self, serial_number="AA11", country_of_origin="Ukraine", count_in_stack=1, operation_crew_count=1):
@@ -29,7 +32,7 @@ class RestArm(Arm, db.Model):
 
 class RestArmScheme(ma.Schema):
     class Meta:
-        fields = ('_count_in_stack', '_country_of_origin', '_serial_number', '_operation_crew_count')
+        fields = ('_count_in_stack', '_country_of_origin', '_serial_number', '_operation_crew_count', 'id')
 
 
 arm_scheme = RestArmScheme()
