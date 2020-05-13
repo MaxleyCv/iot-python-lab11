@@ -1,4 +1,4 @@
-from app.python.models.Arm import Arm
+from application.models.Arm import Arm
 
 
 class InfantryEquipment(Arm):
