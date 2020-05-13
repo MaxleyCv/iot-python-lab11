@@ -1,10 +1,7 @@
 from flask import Flask, jsonify, abort, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
-from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
-import pymysql
-import json
 import copy
 
 from models.Arm import Arm
@@ -13,7 +10,6 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 ma = Marshmallow(app)
 
 app.secret_key = 'vasiaVasile2020'
