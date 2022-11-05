@@ -3,12 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
 from flask_marshmallow import Marshmallow
 import copy
+from flask_cors import CORS, cross_origin
 
 from models.Arm import Arm
+from models.Arm import BaseInfo
 from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
+CORS(app)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -31,8 +34,26 @@ class RestArmScheme(ma.Schema):
         fields = ('_count_in_stack', '_country_of_origin', '_serial_number', '_operation_crew_count', 'id')
 
 
+class RestBaseInfo(BaseInfo, db.Model):
+    id = Column(Integer, primary_key=True)
+    soldiers = Column(Integer, unique=False)
+    trucks = Column(Integer, unique=False)
+    roads = Column(Integer, unique=False)
+    rain = Column(Integer, unique=False)
+
+    def __init__(self, soldiers, trucks, roads, rain):
+        super().__init__(soldiers, trucks, roads, rain)
+
+
+class RestBaseInfoScheme(ma.Schema):
+    class Meta:
+        fields = ('soldiers', 'trucks', 'roads', 'rain', 'id')
+
+
 arm_scheme = RestArmScheme()
 arms_scheme = RestArmScheme(many=True)
+
+base_scheme = RestBaseInfoScheme()
 
 
 @app.route("/arms", methods=["GET"])
@@ -42,6 +63,7 @@ def get_all_arms():
 
 
 @app.route("/arm", methods=["POST"])
+@cross_origin()
 def add_arm():
     stack_count = request.json["count_in_stack"]
     origin = request.json["country_of_origin"]
@@ -54,6 +76,7 @@ def add_arm():
 
 
 @app.route("/arms/<id>", methods=["GET"])
+@cross_origin()
 def get_arm(id):
     arm = RestArm.query.get(id)
     if not arm:
@@ -62,6 +85,7 @@ def get_arm(id):
 
 
 @app.route("/arm/<id>", methods=["put"])
+@cross_origin()
 def upd_arm(id):
     arm1 = RestArm.query.get(id)
     if not arm1:
@@ -76,6 +100,7 @@ def upd_arm(id):
 
 
 @app.route("/arm/<id>", methods=["DELETE"])
+@cross_origin()
 def delete_arm(id):
     arm = RestArm.query.get(id)
     if not arm:
@@ -85,6 +110,20 @@ def delete_arm(id):
     return arm_scheme.jsonify(arm)
 
 
+@app.route("/watch", methods=["GET"])
+@cross_origin()
+def get_base_info():
+    info = RestBaseInfo.query.all()
+
+    return base_scheme.jsonify(info[-1]) if info[-1] else {
+            "soldiers": 0,
+            "trucks": 0,
+            "roads": 0,
+            "rain": 0
+    }
+
+
+
 if __name__ == '__main__':
     db.create_all()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8080)
